@@ -6,7 +6,9 @@ In 1769, Euler conjectured that the equation $A^4 + B^4 + C^4 = D^4$ has no non-
 
 To solve the Diophantine equation $A^4 + B^4 + C^4 = D^4$, we implement an efficient version of the approach sketched in [Elkies (1988)](https://www.ams.org/journals/mcom/1988-51-184/S0025-5718-1988-0930224-9/S0025-5718-1988-0930224-9.pdf). (A naive search would need $\sim 4\cdot 400000^4\approx 10^{23}$ integer operations before finding a solution, far exceeding even the limits of modern hardware.)
 
-Our algorithm is a meet-in-the-middle search over pairs $(A, B)$ and $(C, D)$. It runs in two phases, each taking quadratic time:
+Our algorithm performs a "meet-in-the-middle" search over pairs $(A, B)$ and $(C, D)$. It runs in two phases, each taking quadratic time in the upper bound on $D$. This improves over both the naive quartic time algorithm and the cubic time algorithm deployed by [Frye (1988)](https://ieeexplore.ieee.org/document/74138).
+
+The two phases of our algorithm are as follows:
 
 1. Generate a list of "candidate differences" $D^4 - C^4$ by iterating over pairs $(C, D)$ and pruning pairs that fail to satisfy certain modular constraints. Specifically, we consider the equation modulo $5$, $2^8$, $3^6$, $13^2$, and $29^2$.
 2. Check pairs $(A, B)$ until we find a pair such that $A^4 + B^4$ equals a candidate difference $D^4 - C^4$. For fast, cache-friendly lookups, we store candidate differences using a Bloom filter in front of a hash map.
