@@ -38,9 +38,9 @@ auto find_good_pairs_mod_M() {
   std::vector<std::pair<uint32_t, uint32_t>> good_pairs;
   // Let i = d % M and j = c % M.
   for (uint32_t i = 0; i < M; i++) {
-    // MODULO 16
+    // MODULO 4
     // Filter out even numbers, since if d is even in a^4 + b^4 + c^4 = d^4,
-    // then two of a, b, c must be odd, in which case LHS is 2 != 0 mod 16.
+    // then two of a, b, c must be odd, in which case LHS is 2 != 0 mod 4.
     if (i % 2 == 0) {
       continue;
     }
@@ -59,7 +59,7 @@ auto find_good_pairs_mod_M() {
         continue;
       }
       // MODULO P
-      // It must hold that (d^4 - c^4) % P is a sum of quartic powers mod P.
+      // Ensure (d^4 - c^4) % P is a sum of two fourth powers modulo P.
       auto diff = (pow4_mod_P[i % P] - pow4_mod_P[j % P] + P) % P;
       if (!is_sum_of_pow4_mod_P[diff]) {
         continue;
@@ -103,7 +103,7 @@ std::vector<CandidateDifference> compute_differences(uint32_t max_d) {
 
         auto diff = quartic_powers[d] - quartic_powers[c];
 
-        // Check for differences mod 2^8, 3^6, 13^2, 29^2
+        // Ensure diff is a sum of two fourth powers mod 2^8, 3^6, 13^2, 29^2.
         if (!is_sum_of_quartic_residues_mod_256[diff % 256] ||
             !is_sum_of_quartic_residues_mod_729[diff % 729] ||
             !is_sum_of_quartic_residues_mod_169[diff % 169] ||
