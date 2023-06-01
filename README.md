@@ -9,7 +9,7 @@ To solve the Diophantine equation $A^4 + B^4 + C^4 = D^4$, we implement an effic
 Our algorithm is a meet-in-the-middle search over pairs $(A, B)$ and $(C, D)$. It runs in two phases, each taking quadratic time:
 
 1. Generate a list of "candidate differences" $D^4 - C^4$ by iterating over pairs $(C, D)$ and pruning pairs that fail to satisfy certain modular constraints. Specifically, we consider the equation modulo $5$, $2^8$, $3^6$, $13^2$, and $29^2$.
-2. Check pairs $(A, B)$ until we find a pair such that $A^4 + B^4$ equals a candidate difference $D^4 - C^4$. For fast, cache-friendly lookups, we use a Bloom filter in front of a hash map.
+2. Check pairs $(A, B)$ until we find a pair such that $A^4 + B^4$ equals a candidate difference $D^4 - C^4$. For fast, cache-friendly lookups, we store candidate differences using a Bloom filter in front of a hash map.
 
 Running this algorithm uncovers the solution $414560^4 + 95800^4 + 217519^4 = 422481^4$.
 
