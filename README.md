@@ -24,25 +24,25 @@ cd revisiting-euler-elkies && make && ./a.out
 
 ## Output
 
-On a 2023 M2 MacBook Pro, the program produces the following output:
+On a 2020 MacBook Pro, the program (with parallelized search) produces the following output:
 ```
-g++ -std=c++20 -Ofast *.cc
-Searching up to D = 500000
+clang++ -std=c++20 -fopenmp -Ofast *.cc -lomp
+Searching up to D = 500000 with 16 threads
 
 Found 1764000 good pairs (0.154864%)
 Found 26415362 candidate differences (0.0105661%)
 
 === Compute differences ===
-Time: 4.299s
-Total: 4.299s
+Time: 4.126s
+Total: 4.126s
 
 === Populate Bloom filter and hash map ===
-Time: 1.354s
-Total: 5.653s
+Time: 2.442s
+Total: 6.568s
 
 === Check pairwise sums ===
-Time: 20.539s
-Total: 26.192s
+Time: 10.174s
+Total: 16.742s
 
 Solution found: 414560^4 + 95800^4 + 217519^4 = 422481^4
 ```
