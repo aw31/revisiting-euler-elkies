@@ -1,5 +1,4 @@
-#ifndef TIMER_H
-#define TIMER_H
+#pragma once
 
 #include <chrono>
 #include <cstdio>
@@ -31,5 +30,3 @@ class Timer {
     last_time = current_time;
   }
 };
-
-#endif

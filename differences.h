@@ -1,5 +1,4 @@
-#ifndef DIFFERENCES_H
-#define DIFFERENCES_H
+#pragma once
 
 #include <vector>
 
@@ -12,5 +11,3 @@ struct CandidateDifference {
 };
 
 std::vector<CandidateDifference> compute_differences(uint32_t max_d);
-
-#endif
