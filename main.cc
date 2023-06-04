@@ -1,3 +1,5 @@
+#include <omp.h>
+
 #include <bitset>
 #include <cassert>
 #include <iostream>
@@ -7,11 +9,11 @@
 
 typedef unsigned __int128 uint128_t;
 
-constexpr uint32_t PREFIX_LUT_K = 26;
-constexpr uint64_t PREFIX_LUT_M = 1 << PREFIX_LUT_K;
+constexpr uint32_t PREFIX_LUT_K = 32;
+constexpr uint64_t PREFIX_LUT_M = 1ULL << PREFIX_LUT_K;
 std::bitset<PREFIX_LUT_M> prefix_lut;
 
-constexpr uint32_t HASH_MAP_K = 22;
+constexpr uint32_t HASH_MAP_K = 27;
 constexpr uint32_t HASH_MAP_M = 1 << HASH_MAP_K;
 uint32_t hash_map[HASH_MAP_M + 16];
 
@@ -44,7 +46,7 @@ bool contains(uint64_t x) {
   return false;
 }
 
-constexpr uint32_t MAX_D = 500000;
+constexpr uint32_t MAX_D = 10000000;
 uint64_t pow4_uint64[MAX_D + 1];
 
 void verify_ab(std::vector<CandidateDifference> candidate_differences,
@@ -61,7 +63,9 @@ void verify_ab(std::vector<CandidateDifference> candidate_differences,
 
 int main() {
   Timer t = Timer();
-  std::cout << "Searching up to D = " << MAX_D << std::endl << std::endl;
+  std::cout << "Searching up to D = " << MAX_D << " with "
+            << omp_get_max_threads() << " threads" << std::endl
+            << std::endl;
 
   // Compute differences
   auto differences = compute_differences(MAX_D);
@@ -82,6 +86,7 @@ int main() {
   // Ward (Duke Math. J., 1948) shows that (a % 8, b % 8, c % 8) is a
   // permutation of either (0, 0, 1) or (0, 0, 7). Therefore, (i % 8, j % 8) =
   // (0, 0), (5, 0), (0, 5), (3, 0), or (0, 3).
+#pragma omp parallel for
   for (uint32_t i = 8; i <= MAX_D / 5; i += 8) {
     for (uint32_t j = 8; j <= i; j += 8) {
       if (contains(pow4_uint64[i] + pow4_uint64[j])) [[unlikely]] {

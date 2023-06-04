@@ -1,5 +1,7 @@
 #include "differences.h"
 
+#include <omp.h>
+
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -132,8 +134,9 @@ std::vector<CandidateDifference> compute_differences(uint32_t max_d) {
     }
   }
 
-  // Compute differences
-  std::vector<CandidateDifference> differences;
+  // Compute differences per thread
+  std::vector<CandidateDifference> _differences[omp_get_max_threads()];
+#pragma omp parallel for
   for (auto [k, l] : good_pairs) {
     for (int i = 0; M * i <= max_d; i++) {
       for (int j = 0; j <= i; j++) {
@@ -182,9 +185,16 @@ std::vector<CandidateDifference> compute_differences(uint32_t max_d) {
         if (diff % 3125 == 0 && diff % 390625 != 0) {
           continue;
         }
-        differences.push_back({diff, c, d});
+        // Append to thread-local differences
+        _differences[omp_get_thread_num()].push_back({diff, c, d});
       }
     }
+  }
+
+  // Concatenate thread-local differences
+  std::vector<CandidateDifference> differences;
+  for (auto& _d : _differences) {
+    differences.insert(differences.end(), _d.begin(), _d.end());
   }
 
   std::cout << "Found " << differences.size() << " candidate differences ("
